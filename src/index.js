@@ -54,7 +54,7 @@ class FileManagerPlugin {
             const cprOptions = Object.assign({}, this.cprOptions, { filter: command.filter });
 
             cpr(command.source, command.destination, cprOptions, (err, files) => {
-              console.error(err);
+              if (err) console.error(err);
             });
           });
           break;
@@ -65,7 +65,7 @@ class FileManagerPlugin {
             if (!command.source || !command.destination) return;
 
             mv(command.source, command.destination, (err) => {
-              console.error(err);
+              if (err) console.error(err);
             });
           });
           break;
