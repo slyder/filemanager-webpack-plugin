@@ -3,9 +3,9 @@ const rimraf = require('rimraf');
 const mv = require('mv');
 
 class FileManagerPlugin {
-  
+
   constructor(options) {
-    
+
     this.options = this.setOptions(options);
     this.isWin = /^win/.test(process.platform);
 
@@ -13,9 +13,9 @@ class FileManagerPlugin {
     this.cprOptions = {
       deleteFirst: true,
       overwrite: true,
-      confirm: true 
+      confirm: true
     };
-    
+
   }
 
   setOptions(userOptions) {
@@ -46,57 +46,45 @@ class FileManagerPlugin {
       const fileOptions = options[fileAction];
 
       switch (fileAction) {
-      
+
         case 'copy':
-
           fileOptions.forEach(command => {
-          
-            if (!command.source || !command.destination)
-              return;
+            if (!command.source || !command.destination) return;
 
-            cpr(command.source, command.destination, this.cprOptions, (err, files) => {
-              // handle error
+            const cprOptions = Object.assign({}, this.cprOptions, { filter: command.filter });
+
+            cpr(command.source, command.destination, cprOptions, (err, files) => {
+              console.error(err);
             });
-
-          });          
-
+          });
           break;
-        
-        
-        case 'move':
 
+
+        case 'move':
           fileOptions.forEach(command => {
-          
-            if (!command.source || !command.destination)
-              return;
+            if (!command.source || !command.destination) return;
 
             mv(command.source, command.destination, (err) => {
-              // handle error
+              console.error(err);
             });
-
           });
-
           break;
 
         case 'delete':
-
           fileOptions.forEach(path => {
-
-            rimraf(path, { }, (response) => {
+            rimraf(path, {}, (response) => {
               // handle error
             });
-
           });
-
           break;
 
-        default: 
+        default:
           break;
 
       }
 
     }
- 
+
   }
 
   apply(compiler) {
